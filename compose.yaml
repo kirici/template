@@ -1,0 +1,22 @@
+services:
+  postgres:
+    image: 'docker.io/library/postgres:16-bookworm'
+    ports:
+      - '5432:5432'
+    volumes:
+      - template-pg:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: 'postgres'
+      POSTGRES_PASSWORD: 'postgres'
+      POSTGRES_DB: 'template'
+  template:
+    build:
+      context: .
+      dockerfile: containerfile
+    env_file: .env
+    ports:
+      - "$PORT:8080"
+    # depends_on:
+    #   - postgres
+volumes:
+  template-pg:
