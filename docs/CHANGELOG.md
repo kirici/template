@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit message semantics.
 
 ---
+## [0.2.0](https://github.com/kirici/template/compare/v0.1.0..v0.2.0) - 2026-10-10
+
+### Features
+
+- simplify - ([4b8392b](https://github.com/kirici/template/commit/4b8392b5c6f4a0d379eabe30787924526fc3c13a)) - kirici
+
+---
 ## [0.1.0] - 2024-10-05
 
 ### Features
