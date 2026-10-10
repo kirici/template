@@ -1,3 +1,3 @@
 module github.com/kirici/template
 
-go 1.22.7
+go 1.27.2

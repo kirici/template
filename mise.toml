@@ -1,0 +1,35 @@
+[tools]
+go = "1.27.2"
+git-cliff = "2.14.2"
+
+[env]
+PROJECT_NAME = "{{ config_root | basename }}"
+POSTGRES_USER = "postgres"
+POSTGRES_PASSWORD = "postgres"
+POSTGRES_DB = "template"
+# Override defaults using a file if desired
+_.file = ".env"
+
+[tasks.up]
+description = "Start compose stack"
+run = "podman compose up -d"
+
+[tasks.down]
+description = "Stop compose stack"
+run = "podman compose down"
+
+[tasks.build]
+description = "Build container image, keeping the previous one until the new build succeeds"
+run = '''
+podman tag "$PROJECT_NAME:latest" "$PROJECT_NAME:previous" || true
+podman build --label project="$PROJECT_NAME" -t "$PROJECT_NAME:latest" -f containerfile .
+podman rmi -f --ignore "$PROJECT_NAME:previous"
+'''
+
+[tasks.run]
+description = "Run container image"
+run = 'podman run -td --replace -e PORT="$PORT" -p "$PORT_HOST:$PORT" --name "$PROJECT_NAME" "$PROJECT_NAME:latest"'
+
+[tasks.changelog]
+description = "Bump version and regenerate changelog"
+run = "git cliff --bump -c docs/cliff.toml -o docs/CHANGELOG.md"

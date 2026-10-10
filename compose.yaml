@@ -1,22 +1,31 @@
+---
 services:
   postgres:
-    image: 'docker.io/library/postgres:16-bookworm'
+    image: 'docker.io/library/postgres:18.6-trixie'
     ports:
-      - '5432:5432'
+    - '5432:5432'
     volumes:
-      - template-pg:/var/lib/postgresql/data
+    - template-pg:/var/lib/postgresql
     environment:
-      POSTGRES_USER: 'postgres'
-      POSTGRES_PASSWORD: 'postgres'
-      POSTGRES_DB: 'template'
+      POSTGRES_USER: '${POSTGRES_USER}'
+      POSTGRES_PASSWORD: '${POSTGRES_PASSWORD}'
+      POSTGRES_DB: '${POSTGRES_DB}'
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}']
+      interval: 5s
+      timeout: 3s
+      retries: 5
   template:
     build:
       context: .
       dockerfile: containerfile
     env_file: .env
+    environment:
+      DATABASE_URL: 'postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}'
     ports:
-      - "$PORT:8080"
+    - '${PORT_HOST}:${PORT}'
     # depends_on:
-    #   - postgres
+    #   postgres:
+    #     condition: service_healthy
 volumes:
   template-pg:
